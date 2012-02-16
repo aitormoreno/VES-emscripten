@@ -44,6 +44,7 @@
 @property (nonatomic, retain) IBOutlet GLViewController *viewController;
 @property (nonatomic, retain) LoadDataController *dataLoader;
 @property (nonatomic, retain) UIPopoverController *loadDataPopover;
+@property (nonatomic, retain) NSString *lastSessionId;
 
 -(IBAction)reset:(UIButton*)sender;
 -(IBAction)information:(UIButton*)sender;

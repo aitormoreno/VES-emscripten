@@ -33,6 +33,7 @@
 @synthesize viewController;
 @synthesize dataLoader = _dataLoader;
 @synthesize loadDataPopover = _loadDataPopover;
+@synthesize lastSessionId;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions   
 {
@@ -135,7 +136,45 @@
     }
 
   NSURL* url = [NSURL fileURLWithPath:absolutePath];
-  [self handleCustomURLScheme:url];    
+  [self handleCustomURLScheme:url];
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{ 
+  self.lastSessionId = [[alertView textFieldAtIndex:0] text];
+  std::string sessionId = [self.lastSessionId UTF8String];
+  
+  printf("got session id: %s\n", sessionId.c_str());
+  
+  vesKiwiViewerApp* app = [self.glView getApp];
+  
+  std::string host = "paraviewweb.kitware.com";
+  app->doPVWebTest(host, sessionId);
+}
+
+-(void)startPVWebMode
+{  
+  UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Join ParaView Web session"
+                                             message:@"Please enter the session id:"
+                                             delegate:self
+                                             cancelButtonTitle:@"Join"
+                                             otherButtonTitles:nil];
+  alert.alertViewStyle = UIAlertViewStylePlainTextInput;
+  UITextField * alertTextField = [alert textFieldAtIndex:0];
+  alertTextField.keyboardType = UIKeyboardTypeNumberPad;
+  alertTextField.placeholder = @"session id";
+  if (self.lastSessionId != nil)
+    {
+    alertTextField.placeholder = self.lastSessionId; 
+    alertTextField.text = self.lastSessionId;
+    }
+  [alert show];
+  [alert release];
+}
+
+-(void)stopPVWebMode
+{
+
 }
 
 - (BOOL)handleCustomURLScheme:(NSURL *)url;
@@ -163,7 +202,15 @@
   // we already have a file on the device (e.g., from dropbox); use it
   if ([url isFileURL])
     {
-    [glView setFilePath:[url path]];
+    if ([[url path] hasSuffix:@"pvweb"])
+      {
+      [self startPVWebMode];
+      }
+    else
+      {
+      [self stopPVWebMode];
+      [glView setFilePath:[url path]];
+      }
     return YES;
     }
 
