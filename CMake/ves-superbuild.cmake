@@ -104,12 +104,41 @@ macro(crosscompile_vtk proj toolchain_file)
   )
 endmacro()
 
+macro(download_curl)
+  ExternalProject_Add(
+    curl-download
+    GIT_REPOSITORY git://github.com/patmarion/curl.git
+    GIT_TAG origin/v7.24.0-with-cmake-patches
+    SOURCE_DIR ${source_prefix}/curl
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
+  )
+endmacro()
+
+macro(crosscompile_curl proj toolchain_file)
+  ExternalProject_Add(
+    ${proj}
+    DOWNLOAD_COMMAND ""
+    SOURCE_DIR ${source_prefix}/curl
+    DEPENDS curl-download
+    CMAKE_ARGS
+      -DCMAKE_INSTALL_PREFIX:PATH=${install_prefix}/${proj}
+      -DCMAKE_BUILD_TYPE:STRING=${build_type}
+      -DCURL_STATICLIB:BOOL=ON
+      -DBUILD_CURL_EXE:BOOL=OFF
+      -DBUILD_CURL_TESTS:BOOL=OFF
+      -DCMAKE_TOOLCHAIN_FILE:FILEPATH=${toolchain_dir}/${toolchain_file}
+      -C ${toolchain_dir}/curl-TryRunResults.cmake
+  )
+endmacro()
+
 macro(crosscompile_ves proj tag toolchain_file)
   ExternalProject_Add(
     ${proj}
     SOURCE_DIR ${ves_src}
     DOWNLOAD_COMMAND ""
-    DEPENDS vtkmodular-${tag} eigen
+    DEPENDS vtkmodular-${tag} eigen curl-${tag}
     CMAKE_ARGS
       -DCMAKE_INSTALL_PREFIX:PATH=${install_prefix}/${proj}
       -DCMAKE_BUILD_TYPE:STRING=${build_type}
@@ -117,6 +146,8 @@ macro(crosscompile_ves proj tag toolchain_file)
       -DCMAKE_CXX_FLAGS:STRING=${VES_CXX_FLAGS}
       -DVES_USE_VTK:BOOL=ON
       -DVTK_DIR:PATH=${build_prefix}/vtkmodular-${tag}
+      -DCURL_INCLUDE_DIR:PATH=${install_prefix}/curl-${tag}/include
+      -DCURL_LIBRARY:PATH=${install_prefix}/curl-${tag}/lib/libcurl.a
       -DEIGEN_INCLUDE_DIR:PATH=${install_prefix}/eigen
       -DPYTHON_EXECUTABLE:FILEPATH=${PYTHON_EXECUTABLE}
   )
@@ -124,18 +155,23 @@ macro(crosscompile_ves proj tag toolchain_file)
   force_build(${proj})
 endmacro()
 
+
 install_eigen()
 compile_vtk(vtkmodular-host)
+download_curl()
+
 
 if(VES_IOS_SUPERBUILD)
-  crosscompile_vtk(vtkmodular-ios-simulator toolchain-ios-simulator.cmake)
-  crosscompile_vtk(vtkmodular-ios-device toolchain-ios-device.cmake)
-  crosscompile_ves(ves-ios-simulator ios-simulator toolchain-ios-simulator.cmake)
-  crosscompile_ves(ves-ios-device ios-device toolchain-ios-device.cmake)
+  foreach(target ios-simulator ios-device)
+    crosscompile_vtk(vtkmodular-${target} toolchain-${target}.cmake)
+    crosscompile_curl(curl-${target} toolchain-${target}.cmake)
+    crosscompile_ves(ves-${target} ${target} toolchain-${target}.cmake)
+  endforeach()
 endif()
 
 if(VES_ANDROID_SUPERBUILD)
   crosscompile_vtk(vtkmodular-android android.toolchain.cmake)
+  crosscompile_curl(curl-android android.toolchain.cmake)
   crosscompile_ves(ves-android android android.toolchain.cmake)
 endif()
 

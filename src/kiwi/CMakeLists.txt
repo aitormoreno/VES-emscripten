@@ -44,6 +44,9 @@ set(sources ${sources}
     Text/vtkTextProperty.cxx
 )
 
+find_package(CURL REQUIRED)
+include_directories(${CURL_INCLUDE_DIRS})
+
 set(deps
   ves
   vesShaders
@@ -55,6 +58,7 @@ set(deps
   vtkFiltersSources
   vtkFiltersGeometry
   vtkImagingCore
+  ${CURL_LIBRARIES}
   )
 
 # Configure version file
