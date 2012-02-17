@@ -10,6 +10,7 @@
               android:targetSdkVersion="14"/>
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application android:label="@string/app_name"
                  android:icon="@drawable/icon">
@@ -33,6 +34,7 @@
               <category android:name="android.intent.category.BROWSABLE"/>
               <category android:name="android.intent.category.DEFAULT"/>
               <data android:scheme="file"/>
+              <data android:scheme="http"/>
               <data android:mimeType="*/*" />
               <data android:host="*"/>
 
@@ -103,6 +105,12 @@
               <data android:pathPattern=".*\\..*\\..*\\..*\\.mha" />
               <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.mha" />
 
+              <data android:pathPattern=".*\\.kiwi" />
+              <data android:pathPattern=".*\\..*\\.kiwi" />
+              <data android:pathPattern=".*\\..*\\..*\\.kiwi" />
+              <data android:pathPattern=".*\\..*\\..*\\..*\\.kiwi" />
+              <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.kiwi" />
+
             </intent-filter>
 
 
@@ -114,6 +122,7 @@
               <category android:name="android.intent.category.BROWSABLE"/>
               <category android:name="android.intent.category.DEFAULT"/>
               <data android:scheme="file"/>
+              <data android:scheme="http"/>
               <data android:host="*"/>
 
               <!-- The path matching on android doesn't work well for paths
@@ -182,6 +191,12 @@
               <data android:pathPattern=".*\\..*\\..*\\.mha" />
               <data android:pathPattern=".*\\..*\\..*\\..*\\.mha" />
               <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.mha" />
+
+              <data android:pathPattern=".*\\.kiwi" />
+              <data android:pathPattern=".*\\..*\\.kiwi" />
+              <data android:pathPattern=".*\\..*\\..*\\.kiwi" />
+              <data android:pathPattern=".*\\..*\\..*\\..*\\.kiwi" />
+              <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.kiwi" />
 
             </intent-filter>
 

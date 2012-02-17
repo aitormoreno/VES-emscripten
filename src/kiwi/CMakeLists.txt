@@ -10,6 +10,7 @@ set(sources
   vesKiwiAnimationRepresentation.cpp
   vesKiwiBaseApp.cpp
   vesKiwiBrainAtlasRepresentation.cpp
+  vesKiwiCurlDownloader.cpp
   vesKiwiDataConversionTools.cpp
   vesKiwiDataLoader.cpp
   vesKiwiDataRepresentation.cpp
