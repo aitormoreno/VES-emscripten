@@ -1,4 +1,4 @@
-if(NOT VES_LINUX_SUPERBUILD AND NOT VES_ANDROID_SUPERBUILD AND NOT VES_IOS_SUPERBUILD)
+if(NOT VES_LINUX_SUPERBUILD AND NOT VES_ANDROID_SUPERBUILD AND NOT VES_IOS_SUPERBUILD AND NOT VES_EMSCRIPTEN_SUPERBUILD)
   return()
 endif()
 
@@ -173,6 +173,12 @@ if(VES_ANDROID_SUPERBUILD)
   crosscompile_vtk(vtkmodular-android android.toolchain.cmake)
   crosscompile_curl(curl-android android.toolchain.cmake)
   crosscompile_ves(ves-android android android.toolchain.cmake)
+endif()
+
+if(VES_EMSCRIPTEN_SUPERBUILD)
+	crosscompile_vtk(vtkmodular-emscripten emscripten.toolchain.cmake)
+	crosscompile_curl(curl-emscripten emscripten.toolchain.cmake)
+	crosscompile_ves(ves-emscripten emscripten emscripten.toolchain.cmake)
 endif()
 
 if(VES_LINUX_SUPERBUILD)
