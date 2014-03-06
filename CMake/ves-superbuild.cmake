@@ -16,6 +16,8 @@ endif()
 option(VES_HOST_SUPERBUILD "Build VES and dependent subprojects for host architecture" OFF)
 option(VES_ANDROID_SUPERBUILD "Build VES and dependent subprojects for Android" OFF)
 option(VES_IOS_SUPERBUILD "Build VES and dependent subprojects for iOS" OFF)
+option(VES_EMSCRIPTEN_SUPERBUILD "Build VES and dependent subprojects for iOS" OFF)
+
 set(VES_DOWNLOAD_PREFIX "${CMAKE_BINARY_DIR}/downloads" CACHE PATH
   "Directory to store and extract tarballs of external dependencies")
 
@@ -395,6 +397,17 @@ if(VES_ANDROID_SUPERBUILD)
   endif()
   crosscompile_vtk(vtk-android android.toolchain.cmake)
   crosscompile_ves(ves-android android android.toolchain.cmake)
+endif()
+
+if(VES_EMSCRIPTEN_SUPERBUILD)
+  if (VES_USE_CURL)
+    crosscompile_curl(curl-emscripten emscripten.toolchain.cmake)
+  endif()
+  if (VES_USE_LIBARCHIVE)
+    crosscompile_libarchive(libarchive-emscripten emscripten.toolchain.cmake)
+  endif()
+  crosscompile_vtk(vtk-emscripten emscripten.toolchain.cmake)
+  crosscompile_ves(ves-emscripten emscripten emscripten.toolchain.cmake)
 endif()
 
 if(VES_HOST_SUPERBUILD)
